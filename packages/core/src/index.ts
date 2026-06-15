@@ -1,60 +1,73 @@
+import { randomUUID } from 'node:crypto';
+import type { AgentConfig } from './config/index.js';
+import type { AgentMessage } from './runtime/types/message.js';
+import {
+  configurePaths,
+  getOutputDir,
+  getReportsDir,
+  getConversationOutputDir,
+  loadAgentConfig,
+} from './config/index.js';
+
+export type { AgentConfig } from './config/index.js';
+export {
+  getAgentConfig,
+  loadAgentConfig,
+  resetAgentConfigCache,
+} from './config/index.js';
+
+export {
+  buildMergedCodeGeneratorPrompt,
+  getMergedQueryPlatformProfile,
+  type BuildMergedCodeGeneratorPromptParams,
+  type MergedQueryPlatformProfile,
+} from './prompts/index.js';
+
+export type { CodeStyleProfile } from './types/codeStyle.js';
+export { resolveStyleFileName } from './types/codeStyle.js';
+
+export type { AgentMessage } from './runtime/types/message.js';
+
 export interface GenerateCodeParams {
   figmaUrl: string;
   adapterId?: string;
   conversationId?: string;
   folderName?: string;
+  codeStyle?: import('./types/codeStyle.js').CodeStyleProfile;
+  cursorRules?: string;
   cwd?: string;
   outputDir?: string;
+  reportsDir?: string;
+  agentConfig?: AgentConfig;
 }
 
-export interface AgentMessage {
-  type: string;
-  [key: string]: unknown;
-}
-
-/**
- * Public entry for code generation.
- * Phase 1 will wire this to the migrated AgentService + merged-query orchestrator.
- */
 export async function* generateCode(
   params: GenerateCodeParams,
 ): AsyncGenerator<AgentMessage, void, unknown> {
   const { loadAgentConfig } = await import('./config/index.js');
-  const config = loadAgentConfig({
-    cwd: params.cwd,
-    outputDir: params.outputDir,
+  const config =
+    params.agentConfig ??
+    loadAgentConfig({
+      cwd: params.cwd,
+      outputDir: params.outputDir,
+      reportsDir: params.reportsDir,
+    });
+
+  configurePaths({
+    outputDir: config.outputDir,
+    reportsDir: config.reportsDir,
   });
 
-  if (config.agentMode !== 'merged-query') {
-    throw new Error(
-      `Agent mode "${config.agentMode}" is not implemented in open-source core yet. Use merged-query.`,
-    );
-  }
+  const { generateCode: runAgent } = await import('./runtime/generate.js');
+  const conversationId = params.conversationId ?? randomUUID();
 
-  yield {
-    type: 'system',
-    subtype: 'init',
-    message: 'Figma2Code core migration in progress. Agent engine will be wired in Phase 1.',
-    agentMode: config.agentMode,
-    figmaUrl: params.figmaUrl,
-    adapterId: params.adapterId ?? 'ant-design',
-  };
-
-  throw new Error(
-    'Agent engine not migrated yet. Next step: copy agent-server/src/agent into packages/core/src/agent.',
-  );
+  yield* runAgent({
+    ...params,
+    conversationId,
+    agentConfig: config,
+  });
 }
 
-export {
-  loadAgentConfig,
-  getAgentConfig,
-  resetAgentConfigCache,
-  type AgentConfig,
-  type AgentMode,
-} from './config/index.js';
+export { getOutputDir, getReportsDir, getConversationOutputDir };
 
-export {
-  getOutputDir,
-  getReportsDir,
-  getConversationOutputDir,
-} from './paths.js';
+export { previewMergedQueryPrompt, type PreviewPromptParams } from './preview.js';

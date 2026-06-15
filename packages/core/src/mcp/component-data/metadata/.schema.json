@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "library": {
+      "type": "string",
+      "description": "组件库名称"
+    },
+    "version": {
+      "type": "string",
+      "description": "元数据版本号"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "生成时间"
+    },
+    "generator": {
+      "type": "string",
+      "description": "生成器名称和版本"
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ComponentMetadata"
+      }
+    }
+  },
+  "required": ["library", "version", "components"],
+  "definitions": {
+    "ComponentMetadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "组件名称（支持子组件，如 'ProForm.BasicForm'）"
+        },
+        "description": {
+          "type": "string",
+          "description": "组件功能描述（1-2 句）"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["form", "table", "layout", "feedback", "data-display", "navigation", "input", "other"],
+          "description": "组件分类"
+        },
+        "keyProps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "核心 Props（3-5 个最重要的）"
+        },
+        "detailedProps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DetailedProp"
+          },
+          "description": "所有跟设计稿视觉相关的 Props 信息"
+        },
+        "importPath": {
+          "type": "string",
+          "description": "组件导入路径（如 '@shopee/react-pro-components'）"
+        },
+        "exportName": {
+          "type": "string",
+          "description": "导出名称（如 'ProTable'）"
+        },
+        "subComponents": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "子组件列表（如 ['BasicForm', 'CardForm']）"
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "标签（用于搜索和分类）"
+        },
+        "examples": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "使用示例代码片段"
+        },
+        "deprecated": {
+          "type": "boolean",
+          "default": false,
+          "description": "是否已废弃"
+        },
+        "deprecationMessage": {
+          "type": "string",
+          "description": "废弃说明"
+        }
+      },
+      "required": ["name", "description", "keyProps"]
+    },
+    "DetailedProp": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "属性名称"
+        },
+        "description": {
+          "type": "string",
+          "description": "属性描述"
+        },
+        "type": {
+          "type": "string",
+          "description": "属性类型（TypeScript 类型字符串）"
+        },
+        "default": {
+          "type": "string",
+          "description": "默认值"
+        },
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "是否必填"
+        },
+        "deprecated": {
+          "type": "boolean",
+          "default": false,
+          "description": "是否已废弃"
+        }
+      },
+      "required": ["name", "description", "type"]
+    }
+  }
+}

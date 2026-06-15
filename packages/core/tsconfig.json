@@ -4,5 +4,9 @@
     "outDir": "dist",
     "rootDir": "src"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": [
+    "src/mcp/component-spec/README.md",
+    "src/mcp/component-catalog/README.md"
+  ]
 }

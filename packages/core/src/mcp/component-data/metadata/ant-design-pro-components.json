@@ -1,0 +1,33 @@
+{
+  "library": "ant-design-pro-components",
+  "version": "2.x",
+  "components": [
+    {
+      "name": "ProTable",
+      "displayName": "ProTable",
+      "category": "Data Display",
+      "importPath": "@ant-design/pro-components",
+      "exportName": "ProTable",
+      "description": "Advanced table with search, toolbar and pagination.",
+      "tags": ["table", "list", "crud"]
+    },
+    {
+      "name": "ProForm",
+      "displayName": "ProForm",
+      "category": "Data Entry",
+      "importPath": "@ant-design/pro-components",
+      "exportName": "ProForm",
+      "description": "Schema-driven form.",
+      "tags": ["form"]
+    },
+    {
+      "name": "QueryFilter",
+      "displayName": "QueryFilter",
+      "category": "Data Entry",
+      "importPath": "@ant-design/pro-components",
+      "exportName": "QueryFilter",
+      "description": "Search filter form for list pages.",
+      "tags": ["search", "filter"]
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import { config as loadEnv } from 'dotenv';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createAdapterRegistry } from '@figma2code/component-adapter';
-import { generateCode, loadAgentConfig } from '@figma2code/core';
+import { generateCode, loadAgentConfig, previewMergedQueryPrompt } from '@figma2code/core';
 import { createAntDesignAdapter } from '@figma2code/adapter-ant-design';
 
 loadEnv();
@@ -16,7 +16,11 @@ interface GenerateOptions {
   stream: boolean;
 }
 
-function parseArgs(argv: string[]): { command?: string; options: Partial<GenerateOptions> } {
+function parseArgs(argv: string[]): {
+  command?: string;
+  subcommand?: string;
+  options: Partial<GenerateOptions>;
+} {
   const options: Partial<GenerateOptions> = {
     adapter: 'ant-design',
     out: './output',
@@ -24,12 +28,18 @@ function parseArgs(argv: string[]): { command?: string; options: Partial<Generat
   };
 
   let command: string | undefined;
+  let subcommand: string | undefined;
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
 
     if (!command && !arg.startsWith('-')) {
       command = arg;
+      continue;
+    }
+
+    if (command === 'prompt' && !subcommand && !arg.startsWith('-')) {
+      subcommand = arg;
       continue;
     }
 
@@ -57,7 +67,7 @@ function parseArgs(argv: string[]): { command?: string; options: Partial<Generat
     }
   }
 
-  return { command, options };
+  return { command, subcommand, options };
 }
 
 function printHelp(): void {
@@ -65,6 +75,12 @@ function printHelp(): void {
 
 Usage:
   figma2code generate --url <figma-url> [options]
+  figma2code prompt preview --url <figma-url> [options]
+
+Commands:
+  generate                  Run merged-query code generation
+  prompt preview            Print merged-query system prompt (no LLM call)
+  init                      Create a local .env file
 
 Options:
   -u, --url <url>           Figma design URL (required)
@@ -77,7 +93,6 @@ Options:
 Environment:
   FIGMA_API_KEY             Figma REST API key
   ANTHROPIC_API_KEY         Claude API key
-  FIGMA2CODE_AGENT_MODE     merged-query (default) | legacy
 `);
 }
 
@@ -98,12 +113,13 @@ async function runGenerate(options: GenerateOptions): Promise<number> {
 
   console.log(`Figma2Code generate`);
   console.log(`  adapter:   ${adapter.displayName} (${adapter.id})`);
-  console.log(`  mode:      ${config.agentMode}`);
+  console.log(`  mode:      merged-query`);
   console.log(`  output:    ${outDir}`);
   console.log(`  figma url: ${options.url}`);
   console.log('');
 
   try {
+    let fileCount = 0;
     for await (const message of generateCode({
       figmaUrl: options.url,
       adapterId: adapter.id,
@@ -111,6 +127,16 @@ async function runGenerate(options: GenerateOptions): Promise<number> {
       cwd,
       outputDir: outDir,
     })) {
+      if (message.type === 'system' && message.subtype === 'result') {
+        const files = message.files as Array<{ name: string }> | undefined;
+        fileCount = files?.length ?? 0;
+        console.log(`\nDone. Generated ${fileCount} file(s) in ${outDir}/`);
+        continue;
+      }
+      if (message.type === 'text' && message.content) {
+        if (options.stream) process.stdout.write(String(message.content));
+        continue;
+      }
       if (options.stream) {
         console.log(JSON.stringify(message));
       }
@@ -124,8 +150,28 @@ async function runGenerate(options: GenerateOptions): Promise<number> {
   }
 }
 
+async function runPromptPreview(options: GenerateOptions): Promise<number> {
+  if (!options.url) {
+    console.error('Error: --url is required');
+    return 1;
+  }
+
+  const registry = createAdapterRegistry([createAntDesignAdapter()]);
+  const adapter = registry.get(options.adapter);
+  const prompt = previewMergedQueryPrompt({
+    figmaUrl: options.url,
+    adapterId: adapter.id,
+    folderName: options.folderName,
+    outputDir: resolve(process.cwd(), options.out),
+  });
+
+  console.log(prompt);
+  console.error(`\n# prompt length: ${prompt.length} chars`);
+  return 0;
+}
+
 async function main(): Promise<number> {
-  const { command, options } = parseArgs(process.argv.slice(2));
+  const { command, subcommand, options } = parseArgs(process.argv.slice(2));
 
   if (!command || command === 'help' || process.argv.includes('-h') || process.argv.includes('--help')) {
     printHelp();
@@ -136,10 +182,14 @@ async function main(): Promise<number> {
     return runGenerate(options as GenerateOptions);
   }
 
+  if (command === 'prompt' && subcommand === 'preview') {
+    return runPromptPreview(options as GenerateOptions);
+  }
+
   if (command === 'init') {
     const envExample = resolve(process.cwd(), '.env.example');
     const envTarget = resolve(process.cwd(), '.env');
-    writeFileSync(envTarget, `# Copy from figma2code repo .env.example\nFIGMA_API_KEY=\nANTHROPIC_API_KEY=\nFIGMA2CODE_AGENT_MODE=merged-query\n`);
+    writeFileSync(envTarget, `# Copy from figma2code repo .env.example\nFIGMA_API_KEY=\nANTHROPIC_API_KEY=\n`);
     console.log(`Created ${envTarget}`);
     console.log(`See ${envExample} for all options.`);
     return 0;

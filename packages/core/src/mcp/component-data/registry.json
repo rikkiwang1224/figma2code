@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "libraries": {
+    "antd": {
+      "displayName": "Ant Design",
+      "platform": ["pc"],
+      "importPrefix": "antd",
+      "npmPackage": "antd",
+      "typesPath": "es/{component}/index.d.ts",
+      "defaultContextLevel": "types-only"
+    },
+    "ant-design-pro-components": {
+      "displayName": "Ant Design Pro Components",
+      "platform": ["pc"],
+      "importPrefix": "@ant-design/pro-components",
+      "npmPackage": "@ant-design/pro-components",
+      "typesPath": "es/{component}/index.d.ts",
+      "defaultContextLevel": "types-with-brief-example",
+      "components": {
+        "ProTable": { "contextLevel": "full-example" },
+        "ProForm": { "contextLevel": "full-example" },
+        "QueryFilter": { "contextLevel": "full-example" }
+      }
+    }
+  }
+}

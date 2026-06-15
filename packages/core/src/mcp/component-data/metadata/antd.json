@@ -1,0 +1,97 @@
+{
+  "library": "ant-design",
+  "version": "5.x",
+  "components": [
+    {
+      "name": "Button",
+      "displayName": "Button",
+      "category": "General",
+      "importPath": "antd",
+      "exportName": "Button",
+      "description": "Trigger an action.",
+      "tags": ["action", "click"]
+    },
+    {
+      "name": "Table",
+      "displayName": "Table",
+      "category": "Data Display",
+      "importPath": "antd",
+      "exportName": "Table",
+      "description": "Display rows of structured data.",
+      "tags": ["list", "grid", "data"]
+    },
+    {
+      "name": "Form",
+      "displayName": "Form",
+      "category": "Data Entry",
+      "importPath": "antd",
+      "exportName": "Form",
+      "description": "Collect and validate user input.",
+      "tags": ["input", "validation"]
+    },
+    {
+      "name": "Input",
+      "displayName": "Input",
+      "category": "Data Entry",
+      "importPath": "antd",
+      "exportName": "Input",
+      "description": "Text input field.",
+      "tags": ["text", "field"]
+    },
+    {
+      "name": "Select",
+      "displayName": "Select",
+      "category": "Data Entry",
+      "importPath": "antd",
+      "exportName": "Select",
+      "description": "Dropdown selection.",
+      "tags": ["dropdown", "option"]
+    },
+    {
+      "name": "Modal",
+      "displayName": "Modal",
+      "category": "Feedback",
+      "importPath": "antd",
+      "exportName": "Modal",
+      "description": "Dialog overlay.",
+      "tags": ["dialog", "popup"]
+    },
+    {
+      "name": "Drawer",
+      "displayName": "Drawer",
+      "category": "Feedback",
+      "importPath": "antd",
+      "exportName": "Drawer",
+      "description": "Panel that slides in from the edge.",
+      "tags": ["panel", "sidebar"]
+    },
+    {
+      "name": "Tabs",
+      "displayName": "Tabs",
+      "category": "Navigation",
+      "importPath": "antd",
+      "exportName": "Tabs",
+      "description": "Switch between tab panels.",
+      "tags": ["navigation", "switch"]
+    },
+    {
+      "name": "Layout",
+      "displayName": "Layout",
+      "category": "Layout",
+      "importPath": "antd",
+      "exportName": "Layout",
+      "subComponents": ["Header", "Sider", "Content", "Footer"],
+      "description": "Page layout scaffold.",
+      "tags": ["page", "shell"]
+    },
+    {
+      "name": "Space",
+      "displayName": "Space",
+      "category": "Layout",
+      "importPath": "antd",
+      "exportName": "Space",
+      "description": "Set spacing between inline elements.",
+      "tags": ["gap", "inline"]
+    }
+  ]
+}

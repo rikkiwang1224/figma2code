@@ -1,8 +1,7 @@
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-export type AgentMode = 'legacy' | 'merged-query';
-
-const AGENT_MODES: AgentMode[] = ['legacy', 'merged-query'];
+const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 export interface LlmConfig {
   apiKey: string;
@@ -11,7 +10,6 @@ export interface LlmConfig {
   maxTokens: number;
   enableStreaming: boolean;
   agentCwd: string;
-  agentMode: AgentMode;
 }
 
 export interface FigmaConfig {
@@ -28,28 +26,8 @@ export interface AgentConfig {
   maxTokens?: number;
   cwd?: string;
   enableStreaming?: boolean;
-  agentMode?: AgentMode;
   outputDir?: string;
   reportsDir?: string;
-}
-
-function isAgentMode(value: string): value is AgentMode {
-  return AGENT_MODES.includes(value as AgentMode);
-}
-
-function resolveAgentMode(): AgentMode {
-  const explicitMode = process.env.FIGMA2CODE_AGENT_MODE?.trim();
-  if (!explicitMode) {
-    return 'merged-query';
-  }
-
-  if (!isAgentMode(explicitMode)) {
-    throw new Error(
-      `Invalid FIGMA2CODE_AGENT_MODE "${explicitMode}". Allowed: ${AGENT_MODES.join(', ')}`,
-    );
-  }
-
-  return explicitMode;
 }
 
 function loadLlmConfig(agentCwd: string): LlmConfig {
@@ -71,7 +49,6 @@ function loadLlmConfig(agentCwd: string): LlmConfig {
       process.env.FIGMA2CODE_ENABLE_STREAMING === 'true' ||
       process.env.FIGMA2CODE_ENABLE_STREAMING === '1',
     agentCwd,
-    agentMode: resolveAgentMode(),
   };
 }
 
@@ -113,7 +90,7 @@ export function loadAgentConfig(options: LoadAgentConfigOptions = {}): AgentConf
     cwd,
     options.agentCwd ||
       process.env.FIGMA2CODE_AGENT_CWD ||
-      'packages/core',
+      PACKAGE_ROOT,
   );
   const outputDir = resolve(
     cwd,
@@ -134,7 +111,6 @@ export function loadAgentConfig(options: LoadAgentConfigOptions = {}): AgentConf
     figmaApiKey: figma.figmaApiKey,
     figmaMcpPort: figma.figmaMcpPort,
     cwd: llm.agentCwd,
-    agentMode: llm.agentMode,
     outputDir,
     reportsDir,
   };
@@ -155,3 +131,12 @@ export function getAgentConfig(options?: LoadAgentConfigOptions): AgentConfig {
 export function resetAgentConfigCache(): void {
   cachedAgentConfig = null;
 }
+
+export {
+  configurePaths,
+  getOutputDir,
+  getReportsDir,
+  getConversationOutputDir,
+} from './paths.js';
+
+export { AdapterRegistry, adapterRegistry } from './adapterRegistry.js';

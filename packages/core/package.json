@@ -16,14 +16,18 @@
     ".claude"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node scripts/copy-claude-skills.cjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.1.76",
+    "@ant-design/icons": "^5.6.1",
+    "@ant-design/pro-components": "^2.8.6",
     "@figma/rest-api-spec": "^0.36.0",
     "@figma2code/component-adapter": "workspace:*",
+    "antd": "^5.24.0",
     "remeda": "^2.33.6",
+    "sharp": "^0.34.5",
     "zod": "^4.3.6"
   },
   "license": "MIT"
