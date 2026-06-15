@@ -1,0 +1,31 @@
+{
+  "name": "@figma2code/cli",
+  "version": "0.1.0",
+  "description": "CLI for Figma2Code - Figma to React code generation",
+  "type": "module",
+  "bin": {
+    "figma2code": "./bin/figma2code.js"
+  },
+  "main": "./dist/cli.js",
+  "types": "./dist/cli.d.ts",
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/cli.ts generate --help",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@figma2code/adapter-ant-design": "workspace:*",
+    "@figma2code/component-adapter": "workspace:*",
+    "@figma2code/core": "workspace:*",
+    "dotenv": "^17.2.4"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@figma2code/adapter-ant-design",
+  "version": "0.1.0",
+  "description": "Ant Design component library adapter for Figma2Code",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "metadata"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@figma2code/component-adapter": "workspace:*"
+  },
+  "license": "MIT"
+}

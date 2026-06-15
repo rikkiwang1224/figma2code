@@ -1,0 +1,30 @@
+{
+  "name": "@figma2code/core",
+  "version": "0.1.0",
+  "description": "Figma2Code agent core (merged-query)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    ".claude"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.76",
+    "@figma/rest-api-spec": "^0.36.0",
+    "@figma2code/component-adapter": "workspace:*",
+    "remeda": "^2.33.6",
+    "zod": "^4.3.6"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,29 @@
+{
+  "name": "figma2code",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Figma design to React code via Claude Agent SDK",
+  "packageManager": "pnpm@9.15.0",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "dev": "pnpm --filter @figma2code/cli dev",
+    "typecheck": "pnpm -r run typecheck"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  },
+  "license": "MIT",
+  "keywords": [
+    "figma",
+    "design-to-code",
+    "claude",
+    "agent",
+    "react",
+    "antd"
+  ]
+}
